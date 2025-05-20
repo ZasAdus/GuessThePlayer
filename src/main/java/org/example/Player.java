@@ -1,96 +1,107 @@
 package org.example;
 import org.json.*;
 
-public class Player {
+public class Player{
     private final int playerId;
     private String data;
     private String firstName;
     private String lastName;
     private String position;
     private String club;
-    private String country;
+    private String nationality;
 
-    public Player(int id) {
+    public Player(int id){
         this.playerId = id;
         this.data = "";
     }
 
-    public void appendData(String newData) {
+    public void appendData(String newData){
         this.data += newData;
     }
 
-    public void parseJson() {
-        try {
+    public void parsePersonalDataJson(){
+        try{
             JSONObject jsonResponse = new JSONObject(data);
-
-            if (jsonResponse.has("response") && !jsonResponse.getJSONArray("response").isEmpty()) {
+            if(jsonResponse.has("response") && !jsonResponse.getJSONArray("response").isEmpty()){
                 JSONArray responseArray = jsonResponse.getJSONArray("response");
                 JSONObject playerData = responseArray.getJSONObject(0).getJSONObject("player");
-
-                this.firstName = playerData.getString("firstname");
-                this.lastName = playerData.getString("lastname");
-
-                if (playerData.has("position")) {
+                if(playerData.has("firstname")){
+                    this.firstName = playerData.getString("firstname");
+                }
+                if(playerData.has("lastname")){
+                    this.lastName = playerData.getString("lastname");
+                }
+                if(playerData.has("position")){
                     this.position = playerData.getString("position");
                 }
-
-
-                if (responseArray.getJSONObject(0).has("statistics")) {
-                    JSONArray stats = responseArray.getJSONObject(0).getJSONArray("statistics");
-                    if (!stats.isEmpty() && stats.getJSONObject(0).has("team")) {
-                        JSONObject team = stats.getJSONObject(0).getJSONObject("team");
-                        if (team.has("name")) {
-                            this.club = team.getString("name");
-                        }
-                    }
+                if(playerData.has("position")){
+                    this.position = playerData.getString("position");
                 }
-
-                if (playerData.has("nationality")) {
-                    this.country = playerData.getString("nationality");
-                } else if (playerData.has("country")) {
-                    this.country = playerData.getString("country");
+                if(playerData.has("nationality")){
+                    this.nationality = playerData.getString("nationality");
                 }
+                this.data = "";
             }
-        } catch (JSONException e) {
+        } catch(JSONException e){
             System.err.println("Error parsing JSON: " + e.getMessage());
         }
     }
 
-    public int getId() {
+    public void parseClubDataJson(){
+        try{
+            JSONObject jsonResponse = new JSONObject(data);
+            JSONArray responseArray = jsonResponse.getJSONArray("response");
+            for(int i = 0; i < 2; i++){
+                JSONObject teamData = responseArray.getJSONObject(i);
+                JSONObject team = teamData.getJSONObject("team");
+                String teamName = team.getString("name");
+                if(!teamName.equalsIgnoreCase(this.getNationality())){
+                    this.club = teamName;
+                    break;
+                }
+            }
+            data = "";
+        } catch(Exception e){
+            System.err.println("Error parsing club data JSON: " + e.getMessage());
+        }
+    }
+
+    public int getId(){
         return playerId;
     }
 
-    public String getFirstName() {
+    public String getFirstName(){
         return firstName;
     }
 
-    public String getLastName() {
+    public String getLastName(){
         return lastName;
     }
 
-    public String getPosition() {
+    public String getPosition(){
         return position;
     }
 
-    public String getClub() {
+    public String getClub(){
         return club;
     }
 
-    public String getCountry() {
-        return country;
+    public String getNationality(){
+        return nationality;
     }
 
-    public void display() {
+    public void display(){
         System.out.println("Name: " + firstName + " " + lastName);
-        if (position != null && !position.isEmpty()) {
+        if(position != null && !position.isEmpty()){
             System.out.println("Position: " + position);
         }
-        if (club != null && !club.isEmpty()) {
+        if(club != null && !club.isEmpty()){
             System.out.println("Club: " + club);
         }
-        if (country != null && !country.isEmpty()) {
-            System.out.println("Country: " + country);
+        if(nationality != null && !nationality.isEmpty()){
+            System.out.println("Country: " + nationality);
         }
         System.out.println("Player ID: " + playerId);
     }
+
 }
