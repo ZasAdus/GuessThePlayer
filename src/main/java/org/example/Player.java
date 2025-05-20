@@ -34,9 +34,6 @@ public class Player{
                 if(playerData.has("position")){
                     this.position = playerData.getString("position");
                 }
-                if(playerData.has("position")){
-                    this.position = playerData.getString("position");
-                }
                 if(playerData.has("nationality")){
                     this.nationality = playerData.getString("nationality");
                 }
