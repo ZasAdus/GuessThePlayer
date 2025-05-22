@@ -5,17 +5,26 @@ public class Player{
     private String firstName;
     private String lastName;
     private String position;
+    private Integer age;
     private Integer clubID;
     private Integer nationalityID;
     private String nationality;
     private String photoURL;
+    private Integer shirtNumber;
 
     public Player(int id){
         this.playerId = id;
     }
 
+    public Integer getShirtNumber(){
+        return shirtNumber;
+    }
     public Integer getId(){
         return playerId;
+    }
+
+    public Integer getAge(){
+        return age;
     }
 
     public String getNationality(){
@@ -46,8 +55,15 @@ public class Player{
         return photoURL;
     }
 
+    public void setShirtNumber(Integer shirtNumber) {
+        this.shirtNumber = shirtNumber;
+    }
+
     public void setFirstName(String firstName){
         this.firstName = firstName;
+    }
+    public void setAge(Integer age){
+        this.age = age;
     }
     public void setLastName(String lastName){
         this.lastName = lastName;

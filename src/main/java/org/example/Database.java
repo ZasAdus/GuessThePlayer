@@ -1,5 +1,6 @@
 package org.example;
 import java.sql.*;
+import java.util.ArrayList;
 
 public class Database{
     private static Connection connection;
@@ -82,21 +83,35 @@ public class Database{
         }
     }
 
-    public static void insertPlayerData(Integer id, String firstName, String lastName, Integer clubID, Integer nationalityID, String position, String photoURL){
-        String sql = "INSERT INTO PLAYER(playerID, firstName, lastName, clubID, nationalityID, position, photoURL) VALUES(?, ?, ?, ?, ?, ?, ?)";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            pstmt.setInt(1, id);
-            pstmt.setString(2, firstName);
-            pstmt.setString(3, lastName);
-            pstmt.setInt(4, clubID);
-            pstmt.setInt(5, nationalityID);
-            pstmt.setString(6, position);
-            pstmt.setString(7, photoURL);
-
+    public static void insertBasicPlayerData(int playerID, int clubID, int age, String position, int shirtNumber, String photoURL) {
+        String sql = "INSERT IGNORE INTO PLAYER (playerID, clubID, age, position, shirtNumber, photoURL) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, playerID);
+            pstmt.setInt(2, clubID);
+            pstmt.setInt(3, age);
+            pstmt.setString(4, position);
+            pstmt.setInt(5, shirtNumber);
+            pstmt.setString(6, photoURL);
             pstmt.executeUpdate();
-            System.out.println("Player inserted successfully.");
-        }catch(SQLException e){
-            System.err.println("Error inserting player: " + e.getMessage());
+            System.out.println("Inserted player ID: " + playerID + " for club ID: " + clubID);
+        } catch (SQLException e) {
+            System.err.println("Error inserting basic player data: " + e.getMessage());
+        }
+    }
+
+    public static void insertRestOfThePlayerData(int playerID, String firstName, String lastName, int nationalityID) {
+        String sql = "UPDATE PLAYER SET firstName = ?, lastName = ?, nationalityID = ? WHERE playerID = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setInt(3, nationalityID);
+            pstmt.setInt(4, playerID);
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Updated player data for ID: " + playerID);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating player data: " + e.getMessage());
         }
     }
 
@@ -152,4 +167,18 @@ public class Database{
         return false;
     }
 
+    public static ArrayList<Integer> getClubIDs(){
+        String sql = "SELECT clubID FROM CLUB";
+        ArrayList<Integer> clubIDs = new ArrayList<>();
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    clubIDs.add(rs.getInt("clubID"));
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error checking for nationality: " + e.getMessage());
+        }
+        return clubIDs;
+    }
 }
