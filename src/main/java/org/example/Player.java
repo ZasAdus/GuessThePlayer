@@ -1,70 +1,25 @@
 package org.example;
-import org.json.*;
 
 public class Player{
-    private final int playerId;
-    private String data;
+    private final Integer playerId;
     private String firstName;
     private String lastName;
     private String position;
-    private String club;
+    private Integer clubID;
+    private Integer nationalityID;
     private String nationality;
+    private String photoURL;
 
     public Player(int id){
         this.playerId = id;
-        this.data = "";
     }
 
-    public void appendData(String newData){
-        this.data += newData;
-    }
-
-    public void parsePersonalDataJson(){
-        try{
-            JSONObject jsonResponse = new JSONObject(data);
-            if(jsonResponse.has("response") && !jsonResponse.getJSONArray("response").isEmpty()){
-                JSONArray responseArray = jsonResponse.getJSONArray("response");
-                JSONObject playerData = responseArray.getJSONObject(0).getJSONObject("player");
-                if(playerData.has("firstname")){
-                    this.firstName = playerData.getString("firstname");
-                }
-                if(playerData.has("lastname")){
-                    this.lastName = playerData.getString("lastname");
-                }
-                if(playerData.has("position")){
-                    this.position = playerData.getString("position");
-                }
-                if(playerData.has("nationality")){
-                    this.nationality = playerData.getString("nationality");
-                }
-                this.data = "";
-            }
-        } catch(JSONException e){
-            System.err.println("Error parsing JSON: " + e.getMessage());
-        }
-    }
-
-    public void parseClubDataJson(){
-        try{
-            JSONObject jsonResponse = new JSONObject(data);
-            JSONArray responseArray = jsonResponse.getJSONArray("response");
-            for(int i = 0; i < 2; i++){
-                JSONObject teamData = responseArray.getJSONObject(i);
-                JSONObject team = teamData.getJSONObject("team");
-                String teamName = team.getString("name");
-                if(!teamName.equalsIgnoreCase(this.getNationality())){
-                    this.club = teamName;
-                    break;
-                }
-            }
-            data = "";
-        } catch(Exception e){
-            System.err.println("Error parsing club data JSON: " + e.getMessage());
-        }
-    }
-
-    public int getId(){
+    public Integer getId(){
         return playerId;
+    }
+
+    public String getNationality(){
+        return nationality;
     }
 
     public String getFirstName(){
@@ -79,12 +34,38 @@ public class Player{
         return position;
     }
 
-    public String getClub(){
-        return club;
+    public Integer getClubID(){
+        return clubID;
     }
 
-    public String getNationality(){
-        return nationality;
+    public Integer getNationalityID(){
+        return nationalityID;
+    }
+
+    public String getPhotoURL(){
+        return photoURL;
+    }
+
+    public void setFirstName(String firstName){
+        this.firstName = firstName;
+    }
+    public void setLastName(String lastName){
+        this.lastName = lastName;
+    }
+    public void setPosition(String position){
+        this.position = position;
+    }
+    public void setClubID(Integer clubID){
+        this.clubID = clubID;
+    }
+    public void setNationality(String nationality){
+        this.nationality = nationality;
+    }
+    public void setPhotoURL(String photoURL){
+        this.photoURL = photoURL;
+    }
+    public void setNationalityID(Integer nationalityID){
+        this.nationalityID = nationalityID;
     }
 
     public void display(){
@@ -92,8 +73,8 @@ public class Player{
         if(position != null && !position.isEmpty()){
             System.out.println("Position: " + position);
         }
-        if(club != null && !club.isEmpty()){
-            System.out.println("Club: " + club);
+        if(clubID != null){
+            System.out.println("ClubID: " + clubID);
         }
         if(nationality != null && !nationality.isEmpty()){
             System.out.println("Country: " + nationality);
