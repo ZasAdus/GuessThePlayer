@@ -99,12 +99,12 @@ public class Database{
         }
     }
 
-    public static void insertRestOfThePlayerData(int playerID, String firstName, String lastName, int nationalityID) {
-        String sql = "UPDATE PLAYER SET firstName = ?, lastName = ?, nationalityID = ? WHERE playerID = ?";
+    public static void insertRestOfThePlayerData(int playerID, String firstName, String lastName, String nationality) {
+        String sql = "UPDATE PLAYER SET firstName = ?, lastName = ?, nationality = ? WHERE playerID = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, firstName);
             pstmt.setString(2, lastName);
-            pstmt.setInt(3, nationalityID);
+            pstmt.setString(3, nationality);
             pstmt.setInt(4, playerID);
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -142,22 +142,21 @@ public class Database{
         }
     }
 
-    public static void insertNationalityData(Integer id, String name, String logoURL){
-        String sql = "INSERT INTO NATIONALITY VALUES(?, ?, ?)";
+    public static void insertNationalityData(String name, String logoURL){
+        String sql = "INSERT INTO NATIONALITY VALUES(?, ?)";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            pstmt.setInt(1, id);
-            pstmt.setString(2, name);
-            pstmt.setString(3, logoURL);
+            pstmt.setString(1, name);
+            pstmt.setString(2, logoURL);
             pstmt.executeUpdate();
             System.out.println("Nationality inserted successfully.");
         }catch(SQLException e){
             System.err.println("Error inserting nationality: " + e.getMessage());
         }
     }
-    public static boolean containsNationality(Integer id){
-        String sql = "SELECT 1 FROM NATIONALITY WHERE nationalityID = ?";
+    public static boolean containsNationality(String nationality){
+        String sql = "SELECT 1 FROM NATIONALITY WHERE name = ?";
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            pstmt.setInt(1, id);
+            pstmt.setString(1, nationality);
             try(ResultSet rs = pstmt.executeQuery()){
                 return rs.next();
             }

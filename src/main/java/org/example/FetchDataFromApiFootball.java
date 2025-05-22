@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FetchData {
+public class FetchDataFromApiFootball {
     public static String fetch(String url) {
         String apiKey = System.getenv("MY_FOOTBALL_API_KEY");
         if(apiKey == null || apiKey.isEmpty()) {
