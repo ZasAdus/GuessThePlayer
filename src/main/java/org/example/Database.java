@@ -44,8 +44,8 @@ public class Database{
 
         String createNationalityTable = """
         CREATE TABLE IF NOT EXISTS NATIONALITY(
-            nationality VARCHAR(50) PRIMARY KEY,
-            flagURL VARCHAR(255) NOT NULL
+            name VARCHAR(50) PRIMARY KEY,
+            logoURL VARCHAR(255) NOT NULL
         );
     """;
 
@@ -62,12 +62,12 @@ public class Database{
         String createPlayerTable = """
         CREATE TABLE IF NOT EXISTS PLAYER(
             playerID INT PRIMARY KEY,
-            firstName VARCHAR(50) NOT NULL,
-            lastName VARCHAR(50) NOT NULL,
+            firstName VARCHAR(50) NULL,
+            lastName VARCHAR(50) NULL,
             clubID INT NOT NULL,
-            nationality VARCHAR(50) NOT NULL,
-            position VARCHAR(30) NOT NULL,
-            photoURL VARCHAR(255) NOT NULL,
+            nationality VARCHAR(50) NULL,
+            position VARCHAR(30) NULL,
+            photoURL VARCHAR(255) NULL,
             FOREIGN KEY(clubID) REFERENCES CLUB(clubID),
             FOREIGN KEY(nationality) REFERENCES NATIONALITY(nationality)
         );

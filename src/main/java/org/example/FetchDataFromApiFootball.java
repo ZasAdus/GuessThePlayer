@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
 
 public class FetchDataFromApiFootball {
     public static String fetch(String url) {
@@ -40,12 +41,8 @@ public class FetchDataFromApiFootball {
                    }
                }else if(httpCode == 429) {
                     System.err.println("Rate limited, retrying attempt: " + attempt + "/10");
+                    Thread.sleep(Duration.ofSeconds(65));
                     attempt++;
-                    try {
-                        Thread.sleep(1000);
-                   }catch(InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                   }
                }else {
                     System.err.println("Error, HTTP code: " + httpCode);
                     break;
@@ -55,7 +52,9 @@ public class FetchDataFromApiFootball {
             return responseData;
        }catch(IOException e) {
             System.err.println("Error: " + e.getMessage());
-       }finally {
+       } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } finally {
             if(connection != null) {
                 connection.disconnect();
            }

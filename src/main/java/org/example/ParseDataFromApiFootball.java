@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static org.example.FetchDataFromApiFootball.fetch;
 
@@ -76,8 +78,8 @@ public class ParseDataFromApiFootball {
         }
     }
 
-    private static void fetchPlayersFromClubs(ArrayList<Integer> clubIDs){
-        for(Integer clubID : clubIDs){
+    private static void fetchPlayersFromClubs(List<Integer> clubIDs) throws InterruptedException {
+        for (Integer clubID : clubIDs) {
             System.out.println("Fetching players for club ID: " + clubID);
             data = fetch("https://v3.football.api-sports.io/players/squads?team=" + clubID);
             parsePlayersBasicData(clubID);
@@ -93,10 +95,20 @@ public class ParseDataFromApiFootball {
             JSONArray players = responseItem.getJSONArray("players");
             for(int j = 0; j < players.length(); j++){
                 JSONObject player = players.getJSONObject(j);
-                Database.insertBasicPlayerData(player.getInt("id"),
-                        clubId, player.getInt("age"),
+                int number = -1;
+                if(!player.isNull("number")){
+                    number = player.getInt("number");
+                }
+                int age = -1;
+                if(!player.isNull("age")){
+                    age = player.getInt("age");
+                }
+                Database.insertBasicPlayerData(
+                        player.getInt("id"),
+                        clubId,
+                        age,
                         player.getString("position"),
-                        player.getInt("number"),
+                        number,
                         player.getString("photo")
                 );
             }
@@ -190,7 +202,7 @@ public class ParseDataFromApiFootball {
         }
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws InterruptedException {
         Database.connect();
 
         // Uncomment these lines for initial setup:
@@ -199,7 +211,7 @@ public class ParseDataFromApiFootball {
         // fetchClubsData();
 
         clubIDs = Database.getClubIDs();
-        fetchPlayersFromClubs(clubIDs);
+        fetchPlayersFromClubs(clubIDs.subList(10, clubIDs.size()));
 
         Database.disconnect();
     }
