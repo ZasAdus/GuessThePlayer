@@ -19,6 +19,7 @@ import static org.example.FetchDataFromApiFootball.fetch;
 public class ParseDataFromApiFootball {
     private static final HashMap<Integer, String> leaguesMapIDtoName = new HashMap<>();
     private static ArrayList<Integer> clubIDs = new ArrayList<>();
+    private static ArrayList<Integer> playersIDs = new ArrayList<>();
     private static String data;
 
     private static void populateLeaguesMap(){
@@ -79,9 +80,15 @@ public class ParseDataFromApiFootball {
     }
 
     private static void fetchPlayersFromClubs(List<Integer> clubIDs) throws InterruptedException {
+        int n = 0;
         for (Integer clubID : clubIDs) {
+            if(n == 10){
+                n = 0;
+                Thread.sleep(Duration.ofSeconds(65));
+            }
             System.out.println("Fetching players for club ID: " + clubID);
             data = fetch("https://v3.football.api-sports.io/players/squads?team=" + clubID);
+            n++;
             parsePlayersBasicData(clubID);
             data = "";
         }
@@ -117,13 +124,22 @@ public class ParseDataFromApiFootball {
             e.printStackTrace();
         }
     }
-    private static void fetchRestOfThePlayerData(int playerID){
-        data = fetch("https://v3.football.api-sports.io/players/profiles?player="+ playerID);
-        parsePersonalDataJson(playerID);
-        data = "";
+    private static void fetchRestOfThePlayersData(List<Integer> playerIDs) throws InterruptedException {
+        int n = 0;
+        for (Integer playerID : playerIDs){
+            if(n == 10){
+                n = 0;
+                Thread.sleep(Duration.ofSeconds(65));
+            }
+            System.out.println("Fetching personal information for playerID: " + playerID);
+            data = fetch("https://v3.football.api-sports.io/players/profiles?player=" + playerID);
+            n++;
+            parsePersonalData(playerID);
+            data = "";
+        }
     }
 
-    public static void parsePersonalDataJson(int playerID){
+    public static void parsePersonalData(int playerID){
         try{
             JSONObject jsonResponse = new JSONObject(data);
             if(jsonResponse.has("response") && !jsonResponse.getJSONArray("response").isEmpty()){
@@ -131,9 +147,6 @@ public class ParseDataFromApiFootball {
                 JSONObject playerData = responseArray.getJSONObject(0).getJSONObject("player");
                 String nationality = playerData.getString("nationality");
                 Database.insertRestOfThePlayerData(playerID, playerData.getString("firstname"), playerData.getString("lastname"), nationality);
-                if(!Database.containsNationality(nationality)){
-                    fetchFlagURL(nationality);
-                }
                 data = "";
             }
         }catch(JSONException e){
@@ -141,10 +154,10 @@ public class ParseDataFromApiFootball {
         }
     }
 
-    private static void fetchFlagURL(String nationality) {
+    private static void fetchAllNationalities() {
         HttpURLConnection connection = null;
         try {
-            URL apiUrl = new URL("https://restcountries.com/v3.1/name/" + nationality + "?fields=flags");
+            URL apiUrl = new URL("https://restcountries.com/v3.1/all");
             int attempt = 1;
             final int maxAttempts = 10;
             boolean isResponse200 = false;
@@ -184,35 +197,62 @@ public class ParseDataFromApiFootball {
                 connection.disconnect();
             }
         }
-        parseFlagData(nationality);
+        parseNationalities();
+        data = "";
     }
 
-    private static void parseFlagData(String nationality){
-        try{
+    private static void parseNationalities() {
+        try {
             JSONArray countries = new JSONArray(data);
-            if(!countries.isEmpty()){
-                JSONObject country = countries.getJSONObject(0);
-                String flagUrl = country.getJSONObject("flags").getString("png");
-                Database.insertNationalityData(nationality, flagUrl);
-            }else{
-                System.err.println("No results for: " + nationality);
+            for (int i = 0; i < countries.length(); i++) {
+                JSONObject country = countries.getJSONObject(i);
+                JSONObject name = country.getJSONObject("name");
+                String commonName = name.getString("common");
+                JSONObject flags = country.getJSONObject("flags");
+                String flagPng = flags.getString("png");
+                System.out.println("Country: " + commonName + ", Flag: " + flagPng);
+                if(!Database.containsNationality(commonName)){
+                    Database.insertNationalityData(commonName, flagPng);
+                }
             }
-        }catch (JSONException e){
-            System.err.println("Error, during parsing JSON: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Parsing error: " + e.getMessage());
         }
     }
 
+    public static ArrayList<Integer> getPlayersIDs() {
+        return playersIDs;
+    }
+
+    public static void setPlayersIDs(ArrayList<Integer> playersIDs) {
+        ParseDataFromApiFootball.playersIDs = playersIDs;
+    }
+
+    public static ArrayList<Integer> getClubIDs() {
+        return clubIDs;
+    }
+
+    public static void setClubIDs(ArrayList<Integer> clubIDs) {
+        ParseDataFromApiFootball.clubIDs = clubIDs;
+    }
+
     public static void main(String[] args) throws InterruptedException {
+//        if(args.length != 1){
+//            System.err.println("one argument is valid");
+//        }else{
+//            Database.connect();
+//            int n = Integer.parseInt(args[0]);
+//            setPlayersIDs(Database.getPlayerIDs());
+//            fetchRestOfThePlayersData(getPlayersIDs().subList(n, n+100));
+//            Database.disconnect();
+//        }
+        //     populateLeaguesMap();
+//         fetchLeagueData();
+//         fetchClubsData();
+//         clubIDs = Database.getClubIDs();
+//         fetchPlayersFromClubs(clubIDs);
         Database.connect();
-
-        // Uncomment these lines for initial setup:
-        // populateLeaguesMap();
-        // fetchLeagueData();
-        // fetchClubsData();
-
-        clubIDs = Database.getClubIDs();
-        fetchPlayersFromClubs(clubIDs.subList(10, clubIDs.size()));
-
+        fetchAllNationalities();
         Database.disconnect();
     }
 }

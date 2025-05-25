@@ -180,4 +180,19 @@ public class Database{
         }
         return clubIDs;
     }
+
+    public static ArrayList<Integer> getPlayerIDs(){
+        String sql = "SELECT playerID FROM PLAYER";
+        ArrayList<Integer> playerIDs = new ArrayList<>();
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    playerIDs.add(rs.getInt("playerID"));
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error checking for nationality: " + e.getMessage());
+        }
+        return playerIDs;
+    }
 }
