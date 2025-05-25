@@ -1,5 +1,6 @@
-package org.example;
+package org.example.fetchingDataFromApi;
 
+import org.example.Database;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.example.FetchDataFromApiFootball.fetch;
+import static org.example.fetchingDataFromApi.FetchDataFromApiFootball.fetch;
 
 public class ParseDataFromApiFootball {
     private static final HashMap<Integer, String> leaguesMapIDtoName = new HashMap<>();
