@@ -176,12 +176,27 @@ public class Database{
                 }
             }
         }catch(SQLException e){
-            System.err.println("Error checking for nationality: " + e.getMessage());
+            System.err.println("Error looking for clubIDs: " + e.getMessage());
         }
         return clubIDs;
     }
 
-    public static ArrayList<Integer> getPlayerIDs(){
+    public static ArrayList<Integer> getPlayerIDsFromDatabaseThatAreNotFullyInserted(){
+        String sql = "SELECT playerID FROM PLAYER WHERE firstName IS NULL";
+        ArrayList<Integer> playerIDs = new ArrayList<>();
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    playerIDs.add(rs.getInt("playerID"));
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error looking for playerIDs: " + e.getMessage());
+        }
+        return playerIDs;
+    }
+
+    public static ArrayList<Integer> getPlayerIDsFromDatabase(){
         String sql = "SELECT playerID FROM PLAYER";
         ArrayList<Integer> playerIDs = new ArrayList<>();
         try(PreparedStatement pstmt = connection.prepareStatement(sql)){
@@ -191,7 +206,7 @@ public class Database{
                 }
             }
         }catch(SQLException e){
-            System.err.println("Error checking for nationality: " + e.getMessage());
+            System.err.println("Error looking for playerIDs: " + e.getMessage());
         }
         return playerIDs;
     }

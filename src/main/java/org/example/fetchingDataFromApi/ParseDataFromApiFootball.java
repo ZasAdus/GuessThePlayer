@@ -14,7 +14,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
+import static org.example.Database.getPlayerIDsFromDatabaseThatAreNotFullyInserted;
 import static org.example.fetchingDataFromApi.FetchDataFromApiFootball.fetch;
 
 public class ParseDataFromApiFootball {
@@ -127,13 +127,18 @@ public class ParseDataFromApiFootball {
     }
     private static void fetchRestOfThePlayersData(List<Integer> playerIDs) throws InterruptedException {
         int n = 0;
-        for (Integer playerID : playerIDs){
+        int count = 0;
+        for(Integer playerID : playerIDs){
+            if(count == 100){
+                return;
+            }
             if(n == 10){
                 n = 0;
                 Thread.sleep(Duration.ofSeconds(65));
             }
             System.out.println("Fetching personal information for playerID: " + playerID);
             data = fetch("https://v3.football.api-sports.io/players/profiles?player=" + playerID);
+            count++;
             n++;
             parsePersonalData(playerID);
             data = "";
@@ -147,6 +152,7 @@ public class ParseDataFromApiFootball {
                 JSONArray responseArray = jsonResponse.getJSONArray("response");
                 JSONObject playerData = responseArray.getJSONObject(0).getJSONObject("player");
                 String nationality = playerData.getString("nationality");
+                System.out.println(nationality);
                 Database.insertRestOfThePlayerData(playerID, playerData.getString("firstname"), playerData.getString("lastname"), nationality);
                 data = "";
             }
@@ -247,13 +253,16 @@ public class ParseDataFromApiFootball {
 //            fetchRestOfThePlayersData(getPlayersIDs().subList(n, n+100));
 //            Database.disconnect();
 //        }
-        //     populateLeaguesMap();
-//         fetchLeagueData();
-//         fetchClubsData();
-//         clubIDs = Database.getClubIDs();
-//         fetchPlayersFromClubs(clubIDs);
+//        populateLeaguesMap();
+//        fetchLeagueData();
+//        fetchClubsData();
+//        clubIDs = Database.getClubIDs();
+//        fetchPlayersFromClubs(clubIDs);
+//        fetchAllNationalities();
         Database.connect();
-        fetchAllNationalities();
+        playersIDs = getPlayerIDsFromDatabaseThatAreNotFullyInserted();
+        System.out.println(playersIDs);
+        fetchRestOfThePlayersData(playersIDs);
         Database.disconnect();
     }
 }
