@@ -210,4 +210,67 @@ public class Database{
         }
         return playerIDs;
     }
+
+    public static ArrayList<Player> getPlayersFromDatabase(){
+        String sql = "SELECT * FROM PLAYER";
+        ArrayList<Player> players = new ArrayList<>();
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    Player player = new Player(rs.getInt("playerID"));
+                    player.setClubID(rs.getInt("clubID"));
+                    player.setFirstName(rs.getString("firstName"));
+                    player.setLastName(rs.getString("lastName"));
+                    player.setPhotoURL(rs.getString("photoURL"));
+                    player.setNationality(rs.getString("nationality"));
+                    player.setAge(rs.getInt("age"));
+                    player.setShirtNumber(rs.getInt("shirtNumber"));
+                    player.setPosition(rs.getString("position"));
+                    players.add(player);
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error looking for playerIDs: " + e.getMessage());
+        }
+        return players;
+    }
+
+    public static Player getPlayerFromDatabase(Integer playerID){
+        String sql = "SELECT * FROM PLAYER WHERE playerID = ?";
+        Player player = new Player(playerID);
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setInt(1, playerID);
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    player.setClubID(rs.getInt("clubID"));
+                    player.setFirstName(rs.getString("firstName"));
+                    player.setLastName(rs.getString("lastName"));
+                    player.setPhotoURL(rs.getString("photoURL"));
+                    player.setNationality(rs.getString("nationality"));
+                    player.setAge(rs.getInt("age"));
+                    player.setShirtNumber(rs.getInt("shirtNumber"));
+                    player.setPosition(rs.getString("position"));
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error looking for playerID: " + e.getMessage());
+        }
+        return player;
+    }
+
+    public static String getPlayerClubNameFromDatabase(int clubID){
+        String sql = "SELECT name FROM CLUB WHERE clubID = ?";
+        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, clubID);
+            try(ResultSet rs = pstmt.executeQuery()){
+                while(rs.next()){
+                    return rs.getString("name");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
+
 }

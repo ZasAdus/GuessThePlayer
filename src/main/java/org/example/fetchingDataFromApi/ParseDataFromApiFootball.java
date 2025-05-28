@@ -85,7 +85,7 @@ public class ParseDataFromApiFootball {
         for (Integer clubID : clubIDs) {
             if(n == 10){
                 n = 0;
-                Thread.sleep(Duration.ofSeconds(65));
+                Thread.sleep(65000);
             }
             System.out.println("Fetching players for club ID: " + clubID);
             data = fetch("https://v3.football.api-sports.io/players/squads?team=" + clubID);
@@ -134,7 +134,7 @@ public class ParseDataFromApiFootball {
             }
             if(n == 10){
                 n = 0;
-                Thread.sleep(Duration.ofSeconds(65));
+                Thread.sleep(65000);
             }
             System.out.println("Fetching personal information for playerID: " + playerID);
             data = fetch("https://v3.football.api-sports.io/players/profiles?player=" + playerID);

@@ -7,7 +7,6 @@ public class Player{
     private String position;
     private Integer age;
     private Integer clubID;
-    private Integer nationalityID;
     private String nationality;
     private String photoURL;
     private Integer shirtNumber;
@@ -19,7 +18,7 @@ public class Player{
     public Integer getShirtNumber(){
         return shirtNumber;
     }
-    public Integer getId(){
+    public Integer getPlayerId(){
         return playerId;
     }
 
@@ -47,9 +46,6 @@ public class Player{
         return clubID;
     }
 
-    public Integer getNationalityID(){
-        return nationalityID;
-    }
 
     public String getPhotoURL(){
         return photoURL;
@@ -79,9 +75,6 @@ public class Player{
     }
     public void setPhotoURL(String photoURL){
         this.photoURL = photoURL;
-    }
-    public void setNationalityID(Integer nationalityID){
-        this.nationalityID = nationalityID;
     }
 
     public void display(){

@@ -41,7 +41,7 @@ public class FetchDataFromApiFootball {
                    }
                }else if(httpCode == 429) {
                     System.err.println("Rate limited, retrying attempt: " + attempt + "/10");
-                    Thread.sleep(Duration.ofSeconds(1));
+                    Thread.sleep(1000);
                     attempt++;
                }else {
                     System.err.println("Error, HTTP code: " + httpCode);
