@@ -1,0 +1,23 @@
+body{
+    background-color:#007c9a;
+}
+.player-card {
+    border-radius: 10px;
+    max-width: 300px;
+    box-shadow: 5px 5px 5px cornsilk;
+    font-family: sans-serif;
+    text-align: center;
+    padding: 20px;
+    margin: 10px auto;
+    background-color: #06d5d5;
+    border: 1px solid dimgray;
+}
+
+.player-card img {
+    width: 70px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    display: block;
+}

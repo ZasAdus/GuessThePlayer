@@ -1,39 +1,40 @@
 package org.example;
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Database{
+public class Database {
     private static Connection connection;
 
-    public static void connect(){
+    public static void connect() {
         String url = "jdbc:mysql://localhost:3306/GuessThePlayer";
 
-        try{
+        try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             connection = DriverManager.getConnection(url, System.getenv("userDB"), System.getenv("passwordDB"));
             System.out.println("Connection established successfully!");
-        }catch(ClassNotFoundException e){
+        } catch (ClassNotFoundException e) {
             System.out.println("MySQL JDBC Driver not found.");
             e.printStackTrace();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Connection failed!");
             e.printStackTrace();
         }
     }
 
-    public static void disconnect(){
-        try{
-            if(connection != null && !connection.isClosed()){
+    public static void disconnect() {
+        try {
+            if (connection != null && !connection.isClosed()) {
                 connection.close();
                 System.out.println("Connection closed successfully!");
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.out.println("Error closing connection!");
             e.printStackTrace();
         }
     }
 
-    private static void createTables(){
+    private static void createTables() {
         String createLeagueTable = """
         CREATE TABLE IF NOT EXISTS LEAGUE(
             leagueID INT PRIMARY KEY,
@@ -72,13 +73,13 @@ public class Database{
             FOREIGN KEY(nationality) REFERENCES NATIONALITY(nationality)
         );
     """;
-        try(Statement stmt = connection.createStatement()){
+        try (Statement stmt = connection.createStatement()) {
             stmt.executeUpdate(createLeagueTable);
             stmt.executeUpdate(createNationalityTable);
             stmt.executeUpdate(createClubTable);
             stmt.executeUpdate(createPlayerTable);
             System.out.println("Tables created successfully.");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error creating tables: " + e.getMessage());
         }
     }
@@ -115,162 +116,201 @@ public class Database{
         }
     }
 
-    public static void insertLeagueData(Integer id, String name, String logoURL){
+    public static void insertLeagueData(Integer id, String name, String logoURL) {
         String sql = "INSERT INTO LEAGUE VALUES(?, ?, ?)";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, logoURL);
             pstmt.executeUpdate();
             System.out.println("League inserted successfully.");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error inserting league: " + e.getMessage());
         }
     }
 
-    public static void insertClubData(Integer id, String name, String logoURL, Integer leagueID){
+    public static void insertClubData(Integer id, String name, String logoURL, Integer leagueID) {
         String sql = "INSERT INTO CLUB VALUES(?, ?, ?, ?)";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, logoURL);
             pstmt.setInt(4, leagueID);
             pstmt.executeUpdate();
             System.out.println("Club inserted successfully.");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error inserting club: " + e.getMessage());
         }
     }
 
-    public static void insertNationalityData(String name, String logoURL){
+    public static void insertNationalityData(String name, String logoURL) {
         String sql = "INSERT INTO NATIONALITY VALUES(?, ?)";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, name);
             pstmt.setString(2, logoURL);
             pstmt.executeUpdate();
             System.out.println("Nationality inserted successfully.");
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error inserting nationality: " + e.getMessage());
         }
     }
-    public static boolean containsNationality(String nationality){
+
+    public static boolean containsNationality(String nationality) {
         String sql = "SELECT 1 FROM NATIONALITY WHERE name = ?";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, nationality);
-            try(ResultSet rs = pstmt.executeQuery()){
+            try (ResultSet rs = pstmt.executeQuery()) {
                 return rs.next();
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error checking for nationality: " + e.getMessage());
         }
         return false;
     }
 
-    public static ArrayList<Integer> getClubIDs(){
+    public static ArrayList<Integer> getClubIDs() {
         String sql = "SELECT clubID FROM CLUB";
         ArrayList<Integer> clubIDs = new ArrayList<>();
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
                     clubIDs.add(rs.getInt("clubID"));
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error looking for clubIDs: " + e.getMessage());
         }
         return clubIDs;
     }
 
-    public static ArrayList<Integer> getPlayerIDsFromDatabaseThatAreNotFullyInserted(){
+    public static ArrayList<Integer> getPlayerIDsFromDatabaseThatAreNotFullyInserted() {
         String sql = "SELECT playerID FROM PLAYER WHERE firstName IS NULL";
         ArrayList<Integer> playerIDs = new ArrayList<>();
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
                     playerIDs.add(rs.getInt("playerID"));
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error looking for playerIDs: " + e.getMessage());
         }
         return playerIDs;
     }
 
-    public static ArrayList<Integer> getPlayerIDsFromDatabase(){
+    public static ArrayList<Integer> getPlayerIDsFromDatabase() {
         String sql = "SELECT playerID FROM PLAYER";
         ArrayList<Integer> playerIDs = new ArrayList<>();
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
                     playerIDs.add(rs.getInt("playerID"));
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error looking for playerIDs: " + e.getMessage());
         }
         return playerIDs;
     }
 
-    public static ArrayList<Player> getPlayersFromDatabase(){
+    public static ArrayList<Player> getPlayersFromDatabase() {
         String sql = "SELECT * FROM PLAYER";
         ArrayList<Player> players = new ArrayList<>();
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
                     Player player = new Player(rs.getInt("playerID"));
-                    player.setClubID(rs.getInt("clubID"));
+                    player.setClub(Database.getPlayerClubDataFromDatabase(rs.getInt("clubID")));
                     player.setFirstName(rs.getString("firstName"));
                     player.setLastName(rs.getString("lastName"));
                     player.setPhotoURL(rs.getString("photoURL"));
-                    player.setNationality(rs.getString("nationality"));
+                    player.setNationality(Database.getPlayerNationalityDataFromDatabase(rs.getString("nationality")));
                     player.setAge(rs.getInt("age"));
                     player.setShirtNumber(rs.getInt("shirtNumber"));
                     player.setPosition(rs.getString("position"));
                     players.add(player);
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error looking for playerIDs: " + e.getMessage());
         }
         return players;
     }
 
-    public static Player getPlayerFromDatabase(Integer playerID){
+    public static Player getPlayerFromDatabase(Integer playerID) {
         String sql = "SELECT * FROM PLAYER WHERE playerID = ?";
         Player player = new Player(playerID);
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)){
+        Integer clubID;
+        String nationality;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, playerID);
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
-                    player.setClubID(rs.getInt("clubID"));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
                     player.setFirstName(rs.getString("firstName"));
                     player.setLastName(rs.getString("lastName"));
                     player.setPhotoURL(rs.getString("photoURL"));
-                    player.setNationality(rs.getString("nationality"));
                     player.setAge(rs.getInt("age"));
                     player.setShirtNumber(rs.getInt("shirtNumber"));
                     player.setPosition(rs.getString("position"));
+                    player.setClub(Database.getPlayerClubDataFromDatabase(rs.getInt("clubID")));
+                    nationality = rs.getString("nationality");
+                    player.setNationality(Database.getPlayerNationalityDataFromDatabase(nationality));
                 }
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             System.err.println("Error looking for playerID: " + e.getMessage());
         }
         return player;
     }
 
-    public static String getPlayerClubNameFromDatabase(int clubID){
-        String sql = "SELECT name FROM CLUB WHERE clubID = ?";
-        try(PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, clubID);
-            try(ResultSet rs = pstmt.executeQuery()){
-                while(rs.next()){
-                    return rs.getString("name");
+    private static Nationality getPlayerNationalityDataFromDatabase(String name) {
+        String sql = "SELECT * FROM NATIONALITY WHERE name = ?";
+        Nationality nationality = new Nationality(name);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, name);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                   nationality.setLogoURL(rs.getString("logoURL"));
                 }
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+        return nationality;
     }
 
+    public static Club getPlayerClubDataFromDatabase(int clubID) {
+        String sql = "SELECT * FROM CLUB WHERE clubID = ?";
+        Club club = new Club(clubID);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, clubID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    club.setName(rs.getString("name"));
+                    club.setLogoURL(rs.getString("logoURL"));
+                    club.setLeague(Database.getLeagueDataFromDatabase(rs.getInt("leagueID")));
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return club;
+    }
+
+    private static League getLeagueDataFromDatabase(int leagueID) {
+        String sql = "SELECT * FROM LEAGUE WHERE leagueID = ?";
+        League league = new League(leagueID);
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, leagueID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    league.setLeagueName(rs.getString("name"));
+                    league.setLogoURL(rs.getString("logoURL"));
+                }
+                return league;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

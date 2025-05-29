@@ -6,8 +6,8 @@ public class Player{
     private String lastName;
     private String position;
     private Integer age;
-    private Integer clubID;
-    private String nationality;
+    private Club club;
+    private Nationality nationality;
     private String photoURL;
     private Integer shirtNumber;
 
@@ -21,32 +21,22 @@ public class Player{
     public Integer getPlayerId(){
         return playerId;
     }
-
     public Integer getAge(){
         return age;
     }
-
-    public String getNationality(){
+    public Nationality getNationality(){
         return nationality;
     }
-
-    public String getFirstName(){
-        return firstName;
-    }
-
+    public String getFirstName(){return firstName;}
     public String getLastName(){
         return lastName;
     }
-
     public String getPosition(){
         return position;
     }
-
-    public Integer getClubID(){
-        return clubID;
+    public Club getClub(){
+        return club;
     }
-
-
     public String getPhotoURL(){
         return photoURL;
     }
@@ -54,41 +44,24 @@ public class Player{
     public void setShirtNumber(Integer shirtNumber) {
         this.shirtNumber = shirtNumber;
     }
-
     public void setFirstName(String firstName){
         this.firstName = firstName;
     }
     public void setAge(Integer age){
         this.age = age;
     }
-    public void setLastName(String lastName){
-        this.lastName = lastName;
-    }
+    public void setLastName(String lastName){this.lastName = lastName;}
     public void setPosition(String position){
         this.position = position;
     }
-    public void setClubID(Integer clubID){
-        this.clubID = clubID;
+    public void setClub(Club club){
+        this.club = club;
     }
-    public void setNationality(String nationality){
+    public void setNationality(Nationality nationality){
         this.nationality = nationality;
     }
     public void setPhotoURL(String photoURL){
         this.photoURL = photoURL;
-    }
-
-    public void display(){
-        System.out.println("Name: " + firstName + " " + lastName);
-        if(position != null && !position.isEmpty()){
-            System.out.println("Position: " + position);
-        }
-        if(clubID != null){
-            System.out.println("ClubID: " + clubID);
-        }
-        if(nationality != null && !nationality.isEmpty()){
-            System.out.println("Country: " + nationality);
-        }
-        System.out.println("Player ID: " + playerId);
     }
 
 }
