@@ -237,13 +237,12 @@ public class Database {
         return players;
     }
 
-    public static Player getPlayerFromDatabase(Integer playerID) {
-        String sql = "SELECT * FROM PLAYER WHERE playerID = ?";
-        Player player = new Player(playerID);
-        Integer clubID;
+    public static Player getPlayerFromDatabase(Integer id) {
+        String sql = "SELECT * FROM PLAYER WHERE id = ?";
+        Player player = new Player(id);
         String nationality;
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, playerID);
+            pstmt.setInt(1, id);
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
                     player.setFirstName(rs.getString("firstName"));
@@ -312,5 +311,38 @@ public class Database {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static int getNumberOfPlayers() {
+        String sql = "SELECT COUNT(*) as numberOfPlayers FROM PLAYER";
+        int number;
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            try (ResultSet rs = pstmt.executeQuery()) {
+                rs.next();
+                number = rs.getInt("numberOfPlayers");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return number;
+    }
+
+    public static Player getPlayerFromDatabaseFullName(String fullName) {
+        StringBuilder firstName = new StringBuilder(fullName.substring(0, fullName.indexOf("_"))).append("%");
+        String sql = "SELECT * FROM PLAYER WHERE firstName like ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)){
+            pstmt.setString(1, String.valueOf(firstName));
+            try(ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    StringBuilder name = new StringBuilder(rs.getString("firstName") + " " + rs.getString("lastName"));
+                    if(String.valueOf(name).equals(fullName)){
+                        return Database.getPlayerFromDatabase(rs.getInt("id"));
+                    }
+                }
+            }
+        }catch(SQLException e){
+            System.err.println("Error looking for player: " + e.getMessage());
+        }
+        return new Player(1);
     }
 }

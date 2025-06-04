@@ -6,7 +6,6 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.util.List;
 
 @Service
 class PlayerService {
@@ -14,28 +13,22 @@ class PlayerService {
     PlayerService(ResourcePatternResolver resourcePatternResolver) {
     }
 
-    public List<Player> getAllPlayers() {
-        Database.connect();
-        List<Player> players = Database.getPlayersFromDatabase();
-        Database.disconnect();
-        return players;
+    public Player getPlayerById(Integer id) {
+        return Database.getPlayerFromDatabase(id);
     }
 
-    public Player getPlayerById(Integer id) {
-        Database.connect();
-        Player player = Database.getPlayerFromDatabase(id);
-        Database.disconnect();
-        return player;
+    public Player getPlayerByFullName(String fullName) {
+        return Database.getPlayerFromDatabaseFullName(fullName);
     }
 
     public Player getRandomPlayer(){
-        List<Player> players = getAllPlayers();
-        SecureRandom secureRandom = new SecureRandom();
-        int random = secureRandom.nextInt(players.size());
-        return players.get(random);
+        SecureRandom random = new SecureRandom();
+        Player player = Database.getPlayerFromDatabase(random.nextInt(1,Database.getNumberOfPlayers()+1));
+        return player;
     }
 
-    public GameResult checkGuess(GuessRequest request) {
-        return new GameResult();
+    public boolean checkGuess(Player randomPlayer, String guess) {
+        //TODO
+        return true;
     }
 }

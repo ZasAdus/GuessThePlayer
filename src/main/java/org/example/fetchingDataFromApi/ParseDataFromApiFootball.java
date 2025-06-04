@@ -1,6 +1,7 @@
 package org.example.fetchingDataFromApi;
 
 import org.example.Database;
+import org.example.Player;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

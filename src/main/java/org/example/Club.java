@@ -6,6 +6,7 @@ public class Club {
     private String logoURL;
     private League league;
 
+    Club(){}
     Club(Integer clubID){
         this.clubID = clubID;
     }

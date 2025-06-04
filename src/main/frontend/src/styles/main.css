@@ -4,45 +4,75 @@
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 100%;
+    padding: 0 10px;
 }
 
 .imageContainer {
     margin: auto;
-    width: 250px;
-    height: 250px;
+    width: clamp(200px, 25vw, 250px);
+    height: clamp(200px, 25vw, 250px);
     padding: 10px;
     border-radius: 20px;
     border: 1px solid #06d5d5;
     background-color: #dde0e8;
+    aspect-ratio: 1;
+}
+
+.imageContainerWithHint {
+    margin: 50px auto;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 90vw;
+}
+
+.questionMark {
+    position: absolute;
+    top: -15px;
+    font-size: clamp(18px, 3vw, 24px);
+    font-weight: bold;
+    color: #06d5d5;
+    background: white;
+    padding: 2px 6px;
+    border-radius: 50%;
+    border: 1px solid #06d5d5;
+    z-index: 1;
 }
 
 .PlayerIMG {
     width: 100%;
-    height: auto;
-    filter: blur(10px);
+    height: 100%;
     object-fit: cover;
-    top: 0;
-    left: 0;
+    border-radius: 10px;
     z-index: 0;
     opacity: 0.5;
 }
 
 .containerForInput{
-    margin: 10px;
+    margin: 20px 10px 10px 10px;
     display: flex;
     flex-direction: row;
     align-items: stretch;
     justify-content: center;
+    gap: 10px;
+    max-width: 100%;
+    padding: 0 10px;
 }
 
 .input{
     flex: 1;
     max-width: 300px;
+    min-width: 200px;
     height: 40px;
     font-family: Arial, sans-serif;
-    font-size: 17px;
+    font-size: clamp(14px, 2vw, 17px);
     border: 1px solid #06d5d5;
     border-radius: 5px;
+    padding: 0 10px;
 }
 
 .input:focus{
@@ -53,9 +83,9 @@
 
 .button{
     height: 44px;
-    width: 60px;
+    width: clamp(60px, 15vw, 80px);
     font-family: Arial, sans-serif;
-    font-size: 17px;
+    font-size: clamp(14px, 2vw, 17px);
     border: 1px solid #06d5d5;
     border-radius: 5px;
     background-color: #dde0e8;
@@ -100,3 +130,45 @@
     to { transform: rotate(360deg); }
 }
 
+/* Media queries for mobile responsiveness */
+@media (max-width: 768px) {
+    .containerForHints {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .imageContainerWithHint {
+        margin: 30px auto;
+    }
+
+    .containerForInput {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .input {
+        min-width: 250px;
+        max-width: 90vw;
+    }
+
+    .button {
+        width: 100px;
+        align-self: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .containerForHints {
+        margin: 5px;
+        padding: 0 5px;
+    }
+
+    .imageContainerWithHint {
+        margin: 20px auto;
+    }
+
+    .input {
+        min-width: 200px;
+    }
+}

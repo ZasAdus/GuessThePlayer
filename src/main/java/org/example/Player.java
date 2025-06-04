@@ -1,44 +1,58 @@
 package org.example;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Player{
-    private final Integer playerId;
+    @JsonProperty("id")
+    private Integer playerId;
+    @JsonProperty("firstName")
     private String firstName;
+    @JsonProperty("lastName")
     private String lastName;
+    @JsonProperty("position")
     private String position;
+    @JsonProperty("age")
     private Integer age;
+    @JsonProperty("club")
     private Club club;
+    @JsonProperty("nationality")
     private Nationality nationality;
+    @JsonProperty("photoURL")
     private String photoURL;
+    @JsonProperty("shirtNumber")
     private Integer shirtNumber;
 
+    public Player() {
+    }
     public Player(int id){
         this.playerId = id;
     }
 
     public Integer getShirtNumber(){
-        return shirtNumber;
+        return this.shirtNumber;
     }
     public Integer getPlayerId(){
-        return playerId;
+        return this.playerId;
     }
     public Integer getAge(){
-        return age;
+        return this.age;
     }
     public Nationality getNationality(){
-        return nationality;
+        return this.nationality;
     }
-    public String getFirstName(){return firstName;}
+    public String getFirstName(){return this.firstName;}
     public String getLastName(){
-        return lastName;
+        return this.lastName;
     }
     public String getPosition(){
-        return position;
+        return this.position;
     }
     public Club getClub(){
-        return club;
+        return this.club;
     }
     public String getPhotoURL(){
-        return photoURL;
+        return this.photoURL;
     }
 
     public void setShirtNumber(Integer shirtNumber) {

@@ -1,5 +1,9 @@
 .value {
     font-weight: bold;
     font-family: Arial, sans-serif;
-    font-size: 40px;
+    font-size: clamp(18px, 4vw, 40px);
+    color: #333;
+    text-align: center;
+    word-break: break-word;
+    padding: 5px;
 }

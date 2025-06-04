@@ -7,6 +7,7 @@ public class Nationality {
     Nationality(String name) {
         this.countryName = name;
     }
+    Nationality(){}
 
     Nationality(String name, String logoURL) {
         this.countryName = name;
@@ -14,7 +15,7 @@ public class Nationality {
     }
 
     public String getCountryName() {
-        return countryName;
+        return this.countryName;
     }
 
     public void setCountryName(String name) {
@@ -22,7 +23,7 @@ public class Nationality {
     }
 
     public String getLogoURL() {
-        return logoURL;
+        return this.logoURL;
     }
 
     public void setLogoURL(String logoURL) {

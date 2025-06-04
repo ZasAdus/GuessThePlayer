@@ -1,5 +1,9 @@
 .boxForHint{
     flex: 1;
+    width: calc(20vw - 20px);
+    height: calc(20vw - 20px);
+    min-width: 120px;
+    min-height: 120px;
     max-width: 200px;
     max-height: 200px;
     border-radius: 8px;
@@ -13,4 +17,54 @@
     overflow: hidden;
     background-color: #dde0e8;
     text-align: center;
+    position: relative;
+    aspect-ratio: 1;
+}
+
+.questionMarkContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+
+.questionMarkHint {
+    font-size: clamp(24px, 4vw, 48px);
+    font-weight: bold;
+    color: #06d5d5;
+    margin-bottom: 10px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.categoryLabel {
+    font-size: clamp(10px, 1.2vw, 14px);
+    font-weight: bold;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 5px;
+}
+
+/* Media queries for better responsiveness */
+@media (max-width: 768px) {
+    .boxForHint {
+        width: calc(25vw - 15px);
+        height: calc(25vw - 15px);
+        min-width: 80px;
+        min-height: 80px;
+        margin: 5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .boxForHint {
+        width: calc(30vw - 10px);
+        height: calc(30vw - 10px);
+        min-width: 70px;
+        min-height: 70px;
+        margin: 3px;
+    }
 }

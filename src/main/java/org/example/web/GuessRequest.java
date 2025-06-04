@@ -1,39 +1,45 @@
 package org.example.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.example.Player;
+
 public class GuessRequest {
-    private Integer playerId;
-    private String guessedName;
-    private String timestamp;
+    @JsonProperty("randomPlayer")
+    private Player randomPlayer;
 
-    public GuessRequest() {}
+    @JsonProperty("guess")
+    private String guess;
 
-    public GuessRequest(Integer playerId, String guessedName, String timestamp) {
-        this.playerId = playerId;
-        this.guessedName = guessedName;
-        this.timestamp = timestamp;
+    public GuessRequest() {
+        // Default constructor for JSON deserialization
     }
 
-    public Integer getPlayerId() {
-        return playerId;
+    public GuessRequest(Player randomPlayer, String guess) {
+        this.randomPlayer = randomPlayer;
+        this.guess = guess;
     }
 
-    public String getGuessedName() {
-        return guessedName;
+    public Player getRandomPlayer() {
+        return randomPlayer;
     }
 
-    public String getTimestamp() {
-        return timestamp;
+    public void setRandomPlayer(Player randomPlayer) {
+        this.randomPlayer = randomPlayer;
     }
 
-    public void setPlayerId(Integer playerId) {
-        this.playerId = playerId;
+    public String getGuess() {
+        return guess;
     }
 
-    public void setGuessedName(String guessedName) {
-        this.guessedName = guessedName;
+    public void setGuess(String guess) {
+        this.guess = guess;
     }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    @Override
+    public String toString() {
+        return "GuessRequest{" +
+                "randomPlayer=" + (randomPlayer != null ? randomPlayer.getFirstName() : "null") +
+                ", guess='" + guess + '\'' +
+                '}';
     }
 }
